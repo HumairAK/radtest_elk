@@ -7,7 +7,7 @@ error() {
 
 case $1 in
     run)
-        docker run -p 5601:5601 -p 9200:9200 -p 4000:80 radtest-v1
+        docker run -p 9200:9200 -p 9300:9300 es-v1
         ;;
     exec)
         docker exec -it `docker ps -q -l` bash
