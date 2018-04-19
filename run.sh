@@ -8,28 +8,22 @@ error() {
 case $1 in
     run)
         case $2 in
-            es) cd elasticsearch
-                docker run --net elk-network -p 9200:9200 -p 9300:9300 --name elasticsearch es-v1
+            es) docker run --net elk-network -p 9200:9200 -p 9300:9300 --name elasticsearch es-v1
             ;;
-            ls) cd logstash
-                docker run --net elk-network --add-host=elasticsearch:172.18.0.2 --name logstash ls-v1
+            ls) docker run --net elk-network --add-host=elasticsearch:172.18.0.2 --name logstash ls-v1
             ;;
-            kb) cd kibana
-                docker run --net elk-network -p 5601:5601 --add-host=elasticsearch:172.18.0.2 --name kibana kb-v1
+            kb) docker run --net elk-network -p 5601:5601 --add-host=elasticsearch:172.18.0.2 --name kibana kb-v1
             ;;
             *) error 'Error: must specify an argument.' ;;
         esac
         ;;
     exec)
         case $2 in
-            es) cd elasticsearch
-                docker exec -it elasticsearch bash
+            es) docker exec -it elasticsearch bash
             ;;
-            ls) cd logstash
-                docker exec -it logstash bash
+            ls) docker exec -it logstash bash
             ;;
-            kb) cd kibana
-                docker exec -it kibana bash
+            kb) docker exec -it kibana bash
             ;;
             *) error 'Error: must specify an argument.' ;;
         esac
