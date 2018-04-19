@@ -1,0 +1,21 @@
+Level=INFO openshiftVersion=3.7 project=S3Source action=setUp status=START
+Level=INFO openshiftVersion=3.7 project=S3Source action=initializeApplications status=START
+Level=INFO Unable to create project, trying again, attempted 1 time(s).
+Level=INFO Unable to create project, trying again, attempted 2 time(s).
+Level=INFO Unable to create project, trying again, attempted 3 time(s).
+Level=INFO openshiftVersion=3.7 project=S3Source action=initializeApplications time=57031 status=FINISH
+Level=INFO openshiftVersion=3.7 project=S3Source action=setUp time=67583 status=FINISH
+Level=INFO openshiftVersion=3.7 project=S3Source action=testAVerifyDeployment status=START
+Level=INFO openshiftVersion=3.7 project=S3Source action=testAVerifyDeployment time=265 status=PASSED
+Level=INFO openshiftVersion=3.7 project=S3Source action=testBLoadClientLib status=START
+Level=INFO openshiftVersion=3.7 project=S3Source action=testBLoadClientLib time=95343 status=PASSED
+Level=INFO openshiftVersion=3.7 project=S3Source action=testCConfigS3ClientWithCredentials status=START
+Level=INFO openshiftVersion=3.7 project=S3Source action=testCConfigS3ClientWithCredentials time=28746 status=PASSED
+Level=INFO openshiftVersion=3.7 project=S3Source action=testDReadTextFileFromS3 status=START
+Level=INFO openshiftVersion=3.7 project=S3Source action=testDReadTextFileFromS3 time=47154 status=PASSED
+Level=INFO openshiftVersion=3.7 project=S3Source action=testEReadParquetFileFromS3 status=START
+Level=INFO openshiftVersion=3.7 project=S3Source action=testEReadParquetFileFromS3 time=129278 status=PASSED
+Level=INFO openshiftVersion=3.7 project=S3Source action=tearDown status=START
+Level=INFO openshiftVersion=3.7 project=S3Source action=cleanUp status=START
+Level=INFO openshiftVersion=3.7 project=S3Source action=cleanUp time=6982 status=FINISH
+Level=INFO openshiftVersion=3.7 project=S3Source action=tearDown time=6983 status=FINISH

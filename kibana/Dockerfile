@@ -15,15 +15,10 @@ RUN wget https://artifacts.elastic.co/downloads/kibana/${KIBANA}.rpm -O /tmp/${K
 RUN rm -rf /tmp/${KIBANA}.rpm; \
 yum clean all;
 
-#entrypoint
-ADD start.sh /usr/local/bin/start.sh
-RUN chmod +x /usr/local/bin/start.sh
+ADD kibana.yml /etc/kibana/
 
 #expose ports
-EXPOSE 80 5601 9200 9300 9092 9111
-
-#expose volume
-#VOLUME /var/lib/elasticsearch
+EXPOSE 5601
 
 #start the init
 CMD [ "/usr/share/kibana/bin/kibana" ]

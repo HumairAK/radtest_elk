@@ -6,7 +6,6 @@ RUN yum -y install epel-release; \
     mkdir -p /var/run/sshd; \
     mkdir -p /var/log/supervisor;
 
-
 #download and install elasticsearch
 ENV ES=elasticsearch-6.2.3
 RUN wget https://artifacts.elastic.co/downloads/elasticsearch/${ES}.rpm -O /tmp/${ES}.rpm; \
@@ -23,7 +22,7 @@ ADD elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
 EXPOSE 9200 9300
 
 #expose volume
-#VOLUME /var/lib/elasticsearch
+VOLUME /var/lib/elasticsearch
 
 USER elasticsearch
 
