@@ -1,30 +1,47 @@
 FROM centos:centos7
 
-#upgrading system and install required utilities
-RUN yum -y install epel-release; \
-    yum -y install wget openssh-server supervisor httpd openssh-client openssl which java-1.8.0-openjdk-headless; \
-    mkdir -p /var/run/sshd; \
-    mkdir -p /var/log/supervisor;
+ENV PATH /usr/share/elasticsearch/bin:$PATH
+ENV JAVA_HOME /usr/lib/jvm/jre-1.8.0-openjdk
+RUN yum install -y java-1.8.0-openjdk-headless unzip which
 
-#download and install elasticsearch
-ENV ES=elasticsearch-6.2.3
-RUN wget https://artifacts.elastic.co/downloads/elasticsearch/${ES}.rpm -O /tmp/${ES}.rpm; \
-  yum -y install /tmp/${ES}.rpm;
+RUN groupadd -g 1000 elasticsearch && \
+    adduser -u 1000 -g 1000 -d /usr/share/elasticsearch elasticsearch
 
-#clean all the temporary files and yum cache
-RUN rm -rf /tmp/${ES}.rpm; \
-yum clean all;
+WORKDIR /usr/share/elasticsearch
 
-#add config
+USER 1000
+
+ENV URL_ROOT https://artifacts.elastic.co/downloads/elasticsearch
+ENV TARBALL elasticsearch-6.2.3.tar.gz
+
+# Download and extract defined ES version.
+RUN curl -fsSL ${URL_ROOT}/${TARBALL}| \
+    tar zx --strip-components=1
+
+RUN set -ex && for esdirs in config data logs; do \
+        mkdir -p "$esdirs"; \
+    done
+
+USER 0
+
+# Set gid to 0 for elasticsearch and make group permission similar to that of user
+# This is needed, for example, for Openshift Open: https://docs.openshift.org/latest/creating_images/guidelines.html
+# and allows ES to run with an uid
+RUN chown -R elasticsearch:0 . && \
+    chmod -R g=u /usr/share/elasticsearch
+
+RUN chmod 0775 /usr/share/elasticsearch && \
+    chgrp 0 /usr/share/elasticsearch
+
+# Add config
 ADD elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
+ADD elasticsearch.yml /usr/share/elasticsearch/config/elasticsearch.yml
 
-#expose ports
+USER 185
+
+# Expose ports
 EXPOSE 9200 9300
 
-#expose volume
-VOLUME /var/lib/elasticsearch
-
-USER elasticsearch
-
-#start the init
+# Start the init
 CMD [ "/usr/share/elasticsearch/bin/elasticsearch" ]
+
