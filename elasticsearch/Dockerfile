@@ -2,8 +2,12 @@ FROM centos:centos7
 
 ENV PATH /usr/share/elasticsearch/bin:$PATH
 ENV JAVA_HOME /usr/lib/jvm/jre-1.8.0-openjdk
-RUN yum install -y java-1.8.0-openjdk-headless unzip which
+# Install Java and the "which" command, which is needed by Logstash's shell
+# scripts.
+RUN RUN yum install -y java-1.8.0-openjdk-headless unzip which && \
+    yum clean all
 
+# Provide a non-root user to run the process.
 RUN groupadd -g 1000 elasticsearch && \
     adduser -u 1000 -g 1000 -d /usr/share/elasticsearch elasticsearch
 
@@ -34,7 +38,6 @@ RUN chmod 0775 /usr/share/elasticsearch && \
     chgrp 0 /usr/share/elasticsearch
 
 # Add config
-ADD elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
 ADD elasticsearch.yml /usr/share/elasticsearch/config/elasticsearch.yml
 
 USER 185
