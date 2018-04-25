@@ -4,7 +4,7 @@ ENV PATH /usr/share/elasticsearch/bin:$PATH
 ENV JAVA_HOME /usr/lib/jvm/jre-1.8.0-openjdk
 # Install Java and the "which" command, which is needed by Logstash's shell
 # scripts.
-RUN RUN yum install -y java-1.8.0-openjdk-headless unzip which && \
+RUN yum install -y java-1.8.0-openjdk-headless unzip which && \
     yum clean all
 
 # Provide a non-root user to run the process.

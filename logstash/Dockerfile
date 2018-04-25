@@ -1,7 +1,7 @@
 FROM centos:centos7
 
-RUN mkdir -p /tmp/access_log;
-
+ENV PATH /usr/share/elasticsearch/bin:$PATH
+ENV JAVA_HOME /usr/lib/jvm/jre-1.8.0-openjdk
 # Install Java and the "which" command, which is needed by Logstash's shell
 # scripts.
 RUN yum install -y java-1.8.0-openjdk-headless unzip which && \
@@ -31,6 +31,9 @@ ENV PATH=/usr/share/logstash/bin:$PATH
 # Provide a minimal configuration, so that simple invocations will provide
 # a good experience.
 ADD config/logstash.conf config/
+
+# Temp log content
+RUN mkdir -p /tmp/access_log;
 ADD config/temp.txt /tmp/access_log
 
 ADD config/pipelines.yml config/pipelines.yml
@@ -43,9 +46,6 @@ ENV LANG='en_US.UTF-8' LC_ALL='en_US.UTF-8'
 
 ADD start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
-#RUN chgrp 0 . && \
-#    chmod 0775 . && \
-#    chmod 0777 data
 
 WORKDIR /usr/share
 RUN chown -R logstash:0 logstash && \
