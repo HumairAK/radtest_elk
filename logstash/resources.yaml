@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Template
 metadata:
-  name: elasticsearch
+  name: logstash
 objects:
   - apiVersion: v1
     kind: Service
@@ -11,10 +11,10 @@ objects:
       name: ${APP_NAME}
     spec:
       ports:
-        - name: 9200-tcp
-          port: 9200
+        - name: 5044-tcp
+          port: 5044
           protocol: TCP
-          targetPort: 9200
+          targetPort: 5044
       selector:
         app: ${APP_NAME}
         deploymentconfig: ${APP_NAME}
@@ -25,14 +25,14 @@ objects:
     kind: Service
     metadata:
       labels:
-        app: ${APP_NAME}-transport
-      name: ${APP_NAME}-transport
+        app: ${APP_NAME}-monitoring
+      name: ${APP_NAME}-monitoring
     spec:
       ports:
-        - name: 9300-tcp
-          port: 9300
+        - name: 9600-tcp
+          port: 9600
           protocol: TCP
-          targetPort: 9300
+          targetPort: 9600
       selector:
         app: ${APP_NAME}
         deploymentconfig: ${APP_NAME}
@@ -47,7 +47,7 @@ objects:
       name: ${APP_NAME}
     spec:
       port:
-        targetPort: 9200-tcp
+        targetPort: 5044-tcp
       to:
         kind: Service
         name: ${APP_NAME}
@@ -56,14 +56,14 @@ objects:
     kind: Route
     metadata:
       labels:
-        app: ${APP_NAME}-transport
-      name: ${APP_NAME}-transport
+        app: ${APP_NAME}-monitoring
+      name: ${APP_NAME}-monitoring
     spec:
       port:
-        targetPort: 9300-tcp
+        targetPort: 9600-tcp
       to:
         kind: Service
-        name: ${APP_NAME}-transport
+        name: ${APP_NAME}-monitoring
 
   - apiVersion: v1
     kind: ImageStream
@@ -119,8 +119,8 @@ objects:
 parameters:
 - name: APP_NAME
   required: true
-  value: elasticsearch
+  value: logstash
 - name: IMAGE
   required: true
-  value: humair88/elasticsearch
+  value: humair88/logstash
 

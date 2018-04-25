@@ -1,24 +1,38 @@
 FROM centos:centos7
 
-#upgrading system and install required utilities
-RUN yum -y install epel-release; \
-    yum -y install wget openssh-server supervisor httpd openssh-client openssl which java-1.8.0-openjdk-headless; \
-    mkdir -p /var/run/sshd; \
-    mkdir -p /var/log/supervisor;
+ENV PATH /usr/share/elasticsearch/bin:$PATH
+ENV JAVA_HOME /usr/lib/jvm/jre-1.8.0-openjdk
+
+# Install Java and the "which" command, which is needed by Logstash's shell
+# scripts.
+RUN yum install -y java-1.8.0-openjdk-headless unzip which && \
+    yum clean all
+
+# Provide a non-root user to run the process.
+RUN groupadd -g 1000 kibana && \
+    adduser -u 1000 -g 1000 -d /usr/share/kibana kibana
+
+WORKDIR /usr/share/kibana
 
 #download and install kibana
-ENV KIBANA=kibana-6.2.3-x86_64
-RUN wget https://artifacts.elastic.co/downloads/kibana/${KIBANA}.rpm -O /tmp/${KIBANA}.rpm; \
-  yum -y install /tmp/${KIBANA}.rpm;
+ENV URL_ROOT https://artifacts.elastic.co/downloads/kibana
+ENV TARBALL kibana-6.2.4-linux-x86_64.tar.gz
 
-#clean all the temporary files and yum cache
-RUN rm -rf /tmp/${KIBANA}.rpm; \
-yum clean all;
+# Download and extract defined ES version.
+RUN curl -fsSL ${URL_ROOT}/${TARBALL}| \
+    tar zx --strip-components=1
 
-ADD kibana.yml /etc/kibana/
+ADD kibana.yml config/
+
+# Set gid to 0 for elasticsearch and make group permission similar to that of user
+WORKDIR /usr/share
+RUN chown -R kibana:0 kibana && \
+    chmod -R g=u kibana
 
 #expose ports
 EXPOSE 5601
+
+USER 185
 
 #start the init
 CMD [ "/usr/share/kibana/bin/kibana" ]

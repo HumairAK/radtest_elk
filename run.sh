@@ -4,26 +4,25 @@ error() {
     printf '%s\n' "$1" >&2
     exit 1
 }
-
 case $1 in
     run)
         case $2 in
-            es) docker run --net elk-network -p 9200:9200 -p 9300:9300 --name elasticsearch humair88/elasticsearch
+            es) docker run --net elk-network -p 9200:9200 -p 9300:9300 --name elasticsearch-docker humair88/elasticsearch
             ;;
-            ls) docker run --net elk-network --add-host=elasticsearch:172.18.0.2 --name logstash humair88/logstash
+            ls) docker run --net elk-network --add-host=elasticsearch:172.18.0.2 --name logstash-docker humair88/logstash
             ;;
-            kb) docker run --net elk-network -p 5601:5601 --add-host=elasticsearch:172.18.0.2 --name kibana humair88/kibana
+            kb) docker run --net elk-network -p 5601:5601 --add-host=elasticsearch:172.18.0.2 --name kibana-docker humair88/kibana
             ;;
             *) error 'Error: must specify an argument.' ;;
         esac
         ;;
     exec)
         case $2 in
-            es) docker exec -it elasticsearch bash
+            es) docker exec -it elasticsearch-docker bash
             ;;
-            ls) docker exec -it logstash bash
+            ls) docker exec -it logstash-docker bash
             ;;
-            kb) docker exec -it kibana bash
+            kb) docker exec -it kibana-docker bash
             ;;
             *) error 'Error: must specify an argument.' ;;
         esac
@@ -44,14 +43,14 @@ case $1 in
         ;;
     stop)
         case $2 in
-            es) docker stop elasticsearch
-                docker rm elasticsearch
+            es) docker stop elasticsearch-docker
+                docker rm elasticsearch-docker
             ;;
-            ls) docker stop logstash
-                docker rm logstash
+            ls) docker stop logstash-docker
+                docker rm logstash-docker
             ;;
-            kb) docker stop kibana
-                docker rm kibana
+            kb) docker stop kibana-docker
+                docker rm kibana-docker
             ;;
             *) error 'Error: must specify an argument.' ;;
 
