@@ -3,7 +3,7 @@ FROM centos:centos7
 ENV PATH /usr/share/elasticsearch/bin:$PATH
 ENV JAVA_HOME /usr/lib/jvm/jre-1.8.0-openjdk
 
-# Install Java and the "which" command, which is needed by Logstash's shell scripts.
+# Install Java and the "which" command, which is needed by ES's shell scripts.
 RUN yum install -y java-1.8.0-openjdk-headless unzip which && \
     yum clean all
 
