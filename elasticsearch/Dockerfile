@@ -3,8 +3,7 @@ FROM centos:centos7
 ENV PATH /usr/share/elasticsearch/bin:$PATH
 ENV JAVA_HOME /usr/lib/jvm/jre-1.8.0-openjdk
 
-# Install Java and the "which" command, which is needed by Logstash's shell
-# scripts.
+# Install Java and the "which" command, which is needed by Logstash's shell scripts.
 RUN yum install -y java-1.8.0-openjdk-headless unzip which && \
     yum clean all
 
@@ -19,7 +18,7 @@ USER 1000
 ENV URL_ROOT https://artifacts.elastic.co/downloads/elasticsearch
 ENV TARBALL elasticsearch-6.2.3.tar.gz
 
-# Download and extract defined ES version.
+# Download and extract defined elasticsearch version.
 RUN curl -fsSL ${URL_ROOT}/${TARBALL}| \
     tar zx --strip-components=1
 
@@ -29,7 +28,7 @@ RUN set -ex && for esdirs in config data logs; do \
 
 USER 0
 
-# Add config
+# Provide a minimal configuration
 ADD elasticsearch.yml /usr/share/elasticsearch/config/elasticsearch.yml
 
 # Set gid to 0 for elasticsearch and make group permission similar to that of user
@@ -39,11 +38,11 @@ RUN chown -R elasticsearch:0 . && \
 RUN chmod 0775 /usr/share/elasticsearch && \
     chgrp 0 /usr/share/elasticsearch
 
-USER 185
-
 # Expose ports
 EXPOSE 9200 9300
 
-# Start the init
+# Switch to the user 185 for OpenShift usage
+USER 185
+
 CMD [ "/usr/share/elasticsearch/bin/elasticsearch" ]
 

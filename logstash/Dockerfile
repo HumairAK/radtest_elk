@@ -3,8 +3,7 @@ FROM centos:centos7
 ENV PATH /usr/share/elasticsearch/bin:$PATH
 ENV JAVA_HOME /usr/lib/jvm/jre-1.8.0-openjdk
 
-# Install Java and the "which" command, which is needed by Logstash's shell
-# scripts.
+# Install Java and the "which" command, which is needed by Logstash's shell scripts.
 RUN yum install -y java-1.8.0-openjdk-headless unzip which && \
     yum clean all
 
@@ -17,15 +16,14 @@ WORKDIR /usr/share/logstash
 ENV URL_ROOT https://artifacts.elastic.co/downloads/logstash
 ENV TARBALL logstash-6.2.4.tar.gz
 
-# Download and extract defined ls version.
+# Download and extract defined logstash version.
 RUN curl -fsSL ${URL_ROOT}/${TARBALL}| \
     tar zx --strip-components=1
 
 ENV ELASTIC_CONTAINER true
 ENV PATH=/usr/share/logstash/bin:$PATH
 
-# Provide a minimal configuration, so that simple invocations will provide
-# a good experience.
+# Provide a minimal configuration
 ADD config/ config/
 RUN chown --recursive logstash:logstash config/
 
@@ -47,5 +45,7 @@ ADD temp.txt /tmp/access_log
 # Expose ports
 EXPOSE 9600 5044
 
+# Switch to the user 185 for OpenShift usage
 USER 185
+
 ENTRYPOINT ["/usr/local/bin/start.sh"]
