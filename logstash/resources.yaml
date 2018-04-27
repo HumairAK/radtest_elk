@@ -105,6 +105,16 @@ objects:
             - image: ${IMAGE}
               imagePullPolicy: Always
               name: ${APP_NAME}
+              volumeMounts:
+              - name: app-config
+                mountPath: /usr/share/logstash/config/
+          volumes:
+            - name: app-config
+              configMap:
+                name: example-logstash-config
+                items:
+                - key: logstash-config
+                  path: logstash.conf
       triggers:
         - type: ConfigChange
         - imageChangeParams:
@@ -123,4 +133,3 @@ parameters:
 - name: IMAGE
   required: true
   value: humair88/logstash
-

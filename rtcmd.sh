@@ -53,6 +53,20 @@ case $1 in
         assign_app $2
         docker build -t humair88/${APP}
         ;;
+    create-config)
+        case $2 in
+            es)
+            ;;
+            ls)
+            cd logstash
+            oc create configmap example-logstash-config --from-file=logstash-config=examples/logstash.conf
+            ;;
+            kb)
+            ;;
+            *) error "${SECONDARY_ERR}";;
+        esac
+
+        ;;
     launch)
         oc new-project ${PROJECT_NAME}
         if [ "$2" == "all" ]; then
