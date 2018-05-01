@@ -22,7 +22,7 @@ RUN curl -fsSL ${URL_ROOT}/${TARBALL}| \
     tar zx --strip-components=1
 
 # Provide a minimal configuration
-ADD kibana.yml config/
+ADD config/ config/
 
 # Set gid to 0 for elasticsearch and make group permission similar to that of user
 WORKDIR /usr/share

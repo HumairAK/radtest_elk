@@ -18,7 +18,7 @@ ES_IP=172.18.0.2
 PROJECT_NAME=radtest-elk
 
 PRIMARY_ERR='Error: must specify a primary argument.[run|exec|build|stop|launch]'
-SECONDARY_ERR='Error: must specify a second argument [es|ls|kb]'
+SECONDARY_ERR='Error: must specify a second argument [es|ls|kb|kafka]'
 
 assign_app(){
     case $1 in
@@ -28,6 +28,48 @@ assign_app(){
         *) error "${SECONDARY_ERR}";;
     esac
 }
+
+# Pre-condition, oc is logged into the project
+launch_logstash(){
+    set -e
+    oc create configmap example-logstash-config \
+        --from-file=logstash-config=logstash/examples/logstash.conf \
+        --from-file=logstash-yml=logstash/examples/logstash.yml \
+        --from-file=log4j2-properties=logstash/examples/log4j2.properties \
+        --from-file=pipelines-yml=logstash/examples/pipelines.yml
+    oc new-app logstash/resources.yaml
+}
+
+# Pre-condition, oc is logged into the project
+launch_elasticsearch(){
+    set -e
+    oc create configmap example-es-config \
+        --from-file=jvm-options=elasticsearch/examples/jvm.options \
+        --from-file=elasticsearch-yml=elasticsearch/examples/elasticsearch.yml \
+        --from-file=log4j2-properties=elasticsearch/examples/log4j2.properties
+    oc new-app elasticsearch/resources.yaml
+}
+
+# Pre-condition, oc is logged into the project
+launch_kibana(){
+    set -e
+    oc create configmap example-kb-config \
+        --from-file=kibana-yml=kibana/examples/kibana.yml
+    oc new-app kibana/resources.yaml
+}
+
+launch_kafka(){
+    pushd ~
+    git clone https://github.com/strimzi/strimzi.git && cd strimzi
+    oc create -f examples/install/cluster-controller
+    oc create -f examples/templates/cluster-controller
+    oc new-app strimzi-ephemeral
+    popd
+    rm ~/strimzi -rf
+}
+
+# $1 /in {run, exec, stop, build, launch}
+# $2 /in {es, ls, kb. kafka}
 
 case $1 in
     run)
@@ -51,33 +93,26 @@ case $1 in
         ;;
     build)
         assign_app $2
-        docker build -t humair88/${APP}
-        ;;
-    create-config)
-        case $2 in
-            es)
-            ;;
-            ls)
-            cd logstash
-            oc create configmap example-logstash-config --from-file=logstash-config=examples/logstash.conf
-            ;;
-            kb)
-            ;;
-            *) error "${SECONDARY_ERR}";;
-        esac
-
+        cd ${APP}
+        docker build -t humair88/${APP} .
         ;;
     launch)
-        oc new-project ${PROJECT_NAME}
+        oc get project ${PROJECT_NAME} || oc new-project ${PROJECT_NAME}
         if [ "$2" == "all" ]; then
-            oc new-app elasticsearch/resources.yaml
-            oc new-app kibana/resources.yaml
-            oc new-app logstash/resources.yaml
+            launch_kafka
+            launch_elasticsearch
+            launch_kibana
+            launch_logstash
+        elif [ "$2" == "kafka" ]; then
+            launch_kafka
         else
-            assign_app $2
-            oc new-app `${APP}`/resources.yaml
+            case $2 in
+                es) launch_elasticsearch;;
+                ls) launch_logstash;;
+                kb) launch_kibana;;
+                *) error "${SECONDARY_ERR}";;
+            esac
         fi
         ;;
     *) error "${PRIMARY_ERR}";;
 esac
-

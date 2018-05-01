@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+ name: logs
+ labels:
+   strimzi.io/kind: topic
+data:
+ name: logs
+ partitions: "2"
+ replicas: "2"

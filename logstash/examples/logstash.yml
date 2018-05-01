@@ -1,0 +1,2 @@
+# Uploaded via configmap
+path.config: /usr/share/logstash/config/logstash.conf

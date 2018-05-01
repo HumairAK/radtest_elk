@@ -115,6 +115,12 @@ objects:
                 items:
                 - key: logstash-config
                   path: logstash.conf
+                - key: logstash-yml
+                  path: logstash.yml
+                - key: log4j2-properties
+                  path: log4j2.properties
+                - key: pipelines-yml
+                  path: pipelines.yml
       triggers:
         - type: ConfigChange
         - imageChangeParams:

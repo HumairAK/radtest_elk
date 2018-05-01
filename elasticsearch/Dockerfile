@@ -29,7 +29,7 @@ RUN set -ex && for esdirs in config data logs; do \
 USER 0
 
 # Provide a minimal configuration
-ADD elasticsearch.yml /usr/share/elasticsearch/config/elasticsearch.yml
+ADD config/ config/
 
 # Set gid to 0 for elasticsearch and make group permission similar to that of user
 RUN chown -R elasticsearch:0 . && \

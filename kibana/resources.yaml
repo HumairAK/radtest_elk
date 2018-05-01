@@ -74,6 +74,16 @@ objects:
             - image: ${IMAGE}
               imagePullPolicy: Always
               name: ${APP_NAME}
+              volumeMounts:
+              - name: kb-config
+                mountPath: /usr/share/kibana/config/
+          volumes:
+            - name: kb-config
+              configMap:
+                name: example-kb-config
+                items:
+                - key: kibana-yml
+                  path: kibana.yml
       triggers:
         - type: ConfigChange
         - imageChangeParams:

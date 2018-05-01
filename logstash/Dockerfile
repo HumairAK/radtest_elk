@@ -38,14 +38,10 @@ WORKDIR /usr/share
 RUN chown -R logstash:0 logstash && \
     chmod -R g=u logstash
 
-# Temp log content
-RUN mkdir -p /tmp/access_log;
-ADD temp.txt /tmp/access_log
-
 # Expose ports
 EXPOSE 9600 5044
 
 # Switch to the user 185 for OpenShift usage
 USER 185
 
-ENTRYPOINT ["/usr/local/bin/start.sh"]
+CMD [ "/usr/share/logstash/bin/logstash" ]

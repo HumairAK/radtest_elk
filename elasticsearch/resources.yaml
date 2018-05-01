@@ -105,6 +105,20 @@ objects:
             - image: ${IMAGE}
               imagePullPolicy: Always
               name: ${APP_NAME}
+              volumeMounts:
+              - name: es-config
+                mountPath: /usr/share/elasticsearch/config/
+          volumes:
+            - name: es-config
+              configMap:
+                name: example-es-config
+                items:
+                - key: elasticsearch-yml
+                  path: elasticsearch.yml
+                - key: jvm-options
+                  path: jvm.options
+                - key: log4j2-properties
+                  path: log4j2.properties
       triggers:
         - type: ConfigChange
         - imageChangeParams:
