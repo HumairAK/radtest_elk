@@ -59,13 +59,13 @@ launch_kibana(){
 }
 
 launch_kafka(){
-    pushd ~
+    pushd /tmp
     git clone https://github.com/strimzi/strimzi.git && cd strimzi
-    oc create -f examples/install/cluster-controller
-    oc create -f examples/templates/cluster-controller
+    oc create -f examples/install/cluster-operator
+    oc create -f examples/templates/cluster-operator
     oc new-app strimzi-ephemeral
     popd
-    rm ~/strimzi -rf
+    rm /tmp/strimzi -rf
 }
 
 # $1 /in {run, exec, stop, build, launch}
@@ -99,7 +99,6 @@ case $1 in
     launch)
         oc get project ${PROJECT_NAME} || oc new-project ${PROJECT_NAME}
         if [ "$2" == "all" ]; then
-            launch_kafka
             launch_elasticsearch
             launch_kibana
             launch_logstash

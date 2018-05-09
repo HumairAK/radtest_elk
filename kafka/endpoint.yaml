@@ -1,0 +1,10 @@
+kind: Endpoints
+apiVersion: v1
+metadata:
+  name: my-kafka-svc
+subsets:
+  - addresses:
+      - ip: 10.15.17.194
+    ports:
+      - port: 9092
+        name: kafka

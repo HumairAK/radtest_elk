@@ -48,3 +48,37 @@ cd radtest_elk
 ./rtcmd.sh launch all
 ```
 
+### Configuring your stack
+Within each file folder (elasticsearch, kibana, logstash), you will find example configuration files
+that are mounted as config map volumes within the Openshift cluster. You can change these files dynamically
+and restart your deployment for the changes to take affect. For example, suppose you want to consume messages
+from a kafka broker into your logstash, simply edit the logstash.conf within the example-logstash-config configmap 
+to something like: 
+
+```
+input {
+  kafka {
+    bootstrap_servers => "my-cluster-kafka:9092"
+    topics => ["logs"]
+  }
+}
+
+filter {
+  kv { }
+  mutate {
+    convert => { "time" => "integer" }
+  }
+}
+
+output {
+  elasticsearch {
+    hosts => ["elasticsearch:9200"]
+  }
+  stdout {
+    codec => rubydebug
+  }
+}
+```
+
+Re-deploying your logstash on Openshift will now use the updated config. The same can be done 
+for all the configuration files that come with elasticsearch and kibana.
